@@ -192,27 +192,28 @@ function renderizarGrid(grupoSeleccionado) {
   BLOQUES.forEach(bloque => {
     const tr = document.createElement("tr");
 
-    // Columna de horario
     const tdHorario = document.createElement("td");
     tdHorario.textContent = `${bloque.inicio} - ${bloque.fin}`;
     tr.appendChild(tdHorario);
 
-    // Columnas de días
     DIAS.forEach(dia => {
       const td = document.createElement("td");
 
       const clase = horario.find(h =>
         h.grupo === grupoSeleccionado &&
         h.dia === dia &&
-        h.hora >= bloque.inicio &&
-        h.hora < bloque.fin
+        h.hora === bloque.inicio
       );
 
       if (clase) {
+        td.classList.add("clase-asignada");
         td.innerHTML = `
-          <div class="clase">${clase.materia}</div>
+          <div class="materia">${clase.materia}</div>
           <div class="docente">${clase.docente}</div>
         `;
+      } else {
+        td.classList.add("hueco");
+        td.textContent = "— Libre —";
       }
 
       tr.appendChild(td);
