@@ -11,21 +11,60 @@ const BLOQUES = [
 ];
 
 const docentes = [
-  { nombre: "Ana López", materia: "Matemáticas", disponibilidad: ["Lunes", "Martes", "Miércoles"] },
-  { nombre: "Carlos Ruiz", materia: "Historia", disponibilidad: ["Lunes", "Jueves"] },
-  { nombre: "María Pérez", materia: "Física", disponibilidad: ["Martes", "Miércoles", "Viernes"] },
-  { nombre: "Jorge Sánchez", materia: "Programación", disponibilidad: ["Lunes", "Miércoles", "Viernes"] }
+  { nombre: "Ana López", materia: "Matemáticas", disponibilidad: DIAS },
+  { nombre: "Laura Gómez", materia: "Español", disponibilidad: DIAS },
+  { nombre: "Iván Torres", materia: "Ciencias", disponibilidad: ["Lunes","Miércoles","Viernes"] },
+
+  { nombre: "Carlos Ruiz", materia: "Historia", disponibilidad: ["Lunes","Jueves"] },
+  { nombre: "Marta Silva", materia: "Geografía", disponibilidad: ["Martes","Viernes"] },
+  { nombre: "Rosa Méndez", materia: "Formación Cívica", disponibilidad: ["Miércoles"] },
+
+  { nombre: "María Pérez", materia: "Física", disponibilidad: ["Martes","Miércoles"] },
+  { nombre: "Pedro León", materia: "Química", disponibilidad: ["Lunes","Jueves"] },
+  { nombre: "Hugo Ramírez", materia: "Álgebra", disponibilidad: ["Martes","Viernes"] },
+
+  { nombre: "Jorge Sánchez", materia: "Programación", disponibilidad: ["Lunes","Miércoles","Viernes"] },
+  { nombre: "Rosa Díaz", materia: "Bases de Datos", disponibilidad: ["Martes","Jueves"] },
+  { nombre: "Luis Navarro", materia: "Redes", disponibilidad: ["Miércoles","Viernes"] }
 ];
 
 const materias = [
+  // 1A
   { nombre: "Matemáticas", grupo: "1A", horas: 3 },
+  { nombre: "Español", grupo: "1A", horas: 3 },
+  { nombre: "Ciencias", grupo: "1A", horas: 2 },
+
+  // 1B
   { nombre: "Historia", grupo: "1B", horas: 2 },
+  { nombre: "Geografía", grupo: "1B", horas: 2 },
+  { nombre: "Formación Cívica", grupo: "1B", horas: 1 },
+
+  // 2A
   { nombre: "Física", grupo: "2A", horas: 2 },
-  { nombre: "Programación", grupo: "2B", horas: 3 }
+  { nombre: "Química", grupo: "2A", horas: 2 },
+  { nombre: "Álgebra", grupo: "2A", horas: 2 },
+
+  // 2B
+  { nombre: "Programación", grupo: "2B", horas: 3 },
+  { nombre: "Bases de Datos", grupo: "2B", horas: 2 },
+  { nombre: "Redes", grupo: "2B", horas: 2 }
 ];
 
 let horario = [];
 let errores = [];
+
+function mezclar(array) {
+  return [...array]
+    .map(v => ({ v, r: Math.random() }))
+    .sort((a, b) => a.r - b.r)
+    .map(x => x.v);
+}
+
+function obtenerMateriasPorGrupo(grupo) {
+  return materias
+    .filter(m => m.grupo === grupo)
+    .map(m => ({ ...m, restantes: m.horas }));
+}
 
 function hayConflicto(dia, hora, docente, grupo, materia) {
   return horario.some(h =>
@@ -58,48 +97,58 @@ function generarHorario() {
   horario = [];
   errores = [];
 
-  materias.forEach(materia => {
-    const docente = docentes.find(d => d.materia === materia.nombre);
-    let horasAsignadas = 0;
+  const grupos = [...new Set(materias.map(m => m.grupo))];
 
-    if (!docente) {
-      errores.push(`No hay docente para ${materia.nombre}`);
-      return;
-    }
+  grupos.forEach(grupo => {
+    let materiasGrupo = mezclar(obtenerMateriasPorGrupo(grupo));
 
-    for (const dia of DIAS) {
-      if (!docente.disponibilidad.includes(dia)) continue;
+    DIAS.forEach(dia => {
+      BLOQUES.forEach(bloque => {
 
-      const yaTieneClaseEseDia = horario.some(h =>
-        h.grupo === materia.grupo &&
-        h.materia === materia.nombre &&
-        h.dia === dia
-      );
+        // materias aún disponibles y con docente libre ese día
+        const candidatas = materiasGrupo.filter(m => {
+          if (m.restantes <= 0) return false;
 
-      if (yaTieneClaseEseDia) continue;
+          const docente = docentes.find(d => d.materia === m.nombre);
+          if (!docente) return false;
 
-      for (const hora of HORAS) {
-        if (horasAsignadas >= materia.horas) break;
+          if (!docente.disponibilidad.includes(dia)) return false;
 
-        if (!hayConflicto(dia, hora, docente.nombre, materia.grupo, materia.nombre)) {
-          horario.push({
+          return !hayConflicto(
             dia,
-            hora,
-            grupo: materia.grupo,
-            materia: materia.nombre,
-            docente: docente.nombre
-          });
-          horasAsignadas++;
-          break;
-        }
-      }
-    }
+            bloque.inicio,
+            docente.nombre,
+            grupo,
+            m.nombre
+          );
+        });
 
-    if (horasAsignadas < materia.horas) {
-      errores.push(
-        `No se pudo completar ${materia.nombre} para el grupo ${materia.grupo}`
-      );
-    }
+        if (candidatas.length === 0) return;
+
+        // Elegimos una materia aleatoria válida
+        const materia = candidatas[Math.floor(Math.random() * candidatas.length)];
+        const docente = docentes.find(d => d.materia === materia.nombre);
+
+        horario.push({
+          dia,
+          hora: bloque.inicio,
+          grupo,
+          materia: materia.nombre,
+          docente: docente.nombre
+        });
+
+        materia.restantes--;
+      });
+    });
+
+    // Validación final
+    materiasGrupo.forEach(m => {
+      if (m.restantes > 0) {
+        errores.push(
+          `No se pudieron asignar todas las horas de ${m.nombre} (${grupo})`
+        );
+      }
+    });
   });
 }
 
