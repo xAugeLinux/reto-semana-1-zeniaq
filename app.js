@@ -11,53 +11,63 @@ const BLOQUES = [
 ];
 
 const docentes = [
-  { nombre: "Ana López", materia: "Matemáticas", disponibilidad: DIAS },
-  { nombre: "Laura Gómez", materia: "Español", disponibilidad: DIAS },
-  { nombre: "Iván Torres", materia: "Ciencias", disponibilidad: ["Lunes","Miércoles","Viernes"] },
+  { nombre: "Ana Morales", materia: "Matemáticas", disponibilidad: ["Lunes", "Viernes"] },
+  { nombre: "Laura Cacahuaticla", materia: "Español", disponibilidad: ["Martes", "Miércoles"] },
+  { nombre: "Iván Villa", materia: "Ciencias", disponibilidad: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"] },
 
-  { nombre: "Carlos Ruiz", materia: "Historia", disponibilidad: ["Lunes","Jueves"] },
-  { nombre: "Marta Silva", materia: "Geografía", disponibilidad: ["Martes","Viernes"] },
-  { nombre: "Rosa Méndez", materia: "Formación Cívica", disponibilidad: ["Miércoles"] },
+  { nombre: "César Ruiz", materia: "Historia", disponibilidad: ["Jueves", "Viernes"] },
+  { nombre: "Sara Elvira", materia: "Geografía", disponibilidad: ["Lunes", "Martes", "Viernes"] },
+  { nombre: "Elena Sosa", materia: "Formación Cívica", disponibilidad: ["Lunes", "Martes", "Miércoles"] },
 
-  { nombre: "María Pérez", materia: "Física", disponibilidad: ["Martes","Miércoles"] },
-  { nombre: "Pedro León", materia: "Química", disponibilidad: ["Lunes","Jueves"] },
-  { nombre: "Hugo Ramírez", materia: "Álgebra", disponibilidad: ["Martes","Viernes"] },
+  { nombre: "Karina Pérez", materia: "Física", disponibilidad: ["Lunes", "Martes", "Jueves"] },
+  { nombre: "Pedro Cardenas", materia: "Química", disponibilidad: ["Lunes", "Martes", "Miércoles"] },
+  { nombre: "Candida Ramírez", materia: "Álgebra", disponibilidad: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"] },
 
-  { nombre: "Jorge Sánchez", materia: "Programación", disponibilidad: ["Lunes","Miércoles","Viernes"] },
-  { nombre: "Rosa Díaz", materia: "Bases de Datos", disponibilidad: ["Martes","Jueves"] },
-  { nombre: "Luis Navarro", materia: "Redes", disponibilidad: ["Miércoles","Viernes"] }
+  { nombre: "Lorenzo Sánchez", materia: "Programación", disponibilidad: ["Miércoles", "Jueves", "Viernes"] },
+  { nombre: "Rosa Díaz", materia: "Bases de Datos", disponibilidad: ["Lunes", "Martes", "Viernes"] },
+  { nombre: "Luis Contla", materia: "Redes", disponibilidad: ["Martes", "Miércoles", "Viernes"] }
 ];
 
 const materias = [
   // 1A
-  { nombre: "Matemáticas", grupo: "1A", horas: 3 },
-  { nombre: "Español", grupo: "1A", horas: 3 },
-  { nombre: "Ciencias", grupo: "1A", horas: 2 },
+  { nombre: "Matemáticas", grupo: "1A", horas: 5 },
+  { nombre: "Español", grupo: "1A", horas: 4 },
+  { nombre: "Ciencias", grupo: "1A", horas: 3 },
+  { nombre: "Historia", grupo: "1A", horas: 2 },
+  { nombre: "Geografía", grupo: "1A", horas: 2 },
+  { nombre: "Formación Cívica", grupo: "1A", horas: 2 },
 
   // 1B
-  { nombre: "Historia", grupo: "1B", horas: 2 },
-  { nombre: "Geografía", grupo: "1B", horas: 2 },
-  { nombre: "Formación Cívica", grupo: "1B", horas: 1 },
+  { nombre: "Matemáticas", grupo: "1B", horas: 5 },
+  { nombre: "Historia", grupo: "1B", horas: 3 },
+  { nombre: "Español", grupo: "1B", horas: 4 },
+  { nombre: "Ciencias", grupo: "1B", horas: 3 },
+  { nombre: "Física", grupo: "1B", horas: 2 },
+  { nombre: "Álgebra", grupo: "1B", horas: 2 },
 
   // 2A
-  { nombre: "Física", grupo: "2A", horas: 2 },
-  { nombre: "Química", grupo: "2A", horas: 2 },
-  { nombre: "Álgebra", grupo: "2A", horas: 2 },
+  { nombre: "Química", grupo: "2A", horas: 4 },
+  { nombre: "Matemáticas", grupo: "2A", horas: 4 },
+  { nombre: "Ciencias", grupo: "2A", horas: 3 },
+  { nombre: "Bases de Datos", grupo: "2A", horas: 2 },
+  { nombre: "Programación", grupo: "2A", horas: 2 },
+  { nombre: "Redes", grupo: "2A", horas: 2 },
 
   // 2B
-  { nombre: "Programación", grupo: "2B", horas: 3 },
+  { nombre: "Programación", grupo: "2B", horas: 5 },
+  { nombre: "Matemáticas", grupo: "2B", horas: 4 },
+  { nombre: "Historia", grupo: "2B", horas: 3 },
+  { nombre: "Ciencias", grupo: "2B", horas: 3 },
   { nombre: "Bases de Datos", grupo: "2B", horas: 2 },
   { nombre: "Redes", grupo: "2B", horas: 2 }
 ];
+
 
 let horario = [];
 let errores = [];
 
 function mezclar(array) {
-  return [...array]
-    .map(v => ({ v, r: Math.random() }))
-    .sort((a, b) => a.r - b.r)
-    .map(x => x.v);
+  return array.sort(() => Math.random() - 0.5);
 }
 
 function obtenerMateriasPorGrupo(grupo) {
@@ -66,14 +76,24 @@ function obtenerMateriasPorGrupo(grupo) {
     .map(m => ({ ...m, restantes: m.horas }));
 }
 
-function hayConflicto(dia, hora, docente, grupo, materia) {
+function totalHorasGrupo(grupo) {
+  return materias
+    .filter(m => m.grupo === grupo)
+    .reduce((sum, m) => sum + m.horas, 0);
+}
+
+function horasPorDia(totalHoras) {
+  const base = Math.floor(totalHoras / DIAS.length);
+  let extra = totalHoras % DIAS.length;
+
+  return DIAS.map(() => base + (extra-- > 0 ? 1 : 0));
+}
+
+function hayConflicto(dia, hora, docente, grupo) {
   return horario.some(h =>
     h.dia === dia &&
-    h.hora === hora && (
-      h.docente === docente ||     // docente ocupado
-      h.grupo === grupo ||         // grupo ocupado
-      h.materia === materia        // materia ya usada globalmente
-    )
+    h.hora === hora &&
+    (h.docente === docente || h.grupo === grupo)
   );
 }
 
@@ -100,32 +120,32 @@ function generarHorario() {
   const grupos = [...new Set(materias.map(m => m.grupo))];
 
   grupos.forEach(grupo => {
-    let materiasGrupo = mezclar(obtenerMateriasPorGrupo(grupo));
+    let materiasGrupo = mezclar(
+      materias
+        .filter(m => m.grupo === grupo)
+        .map(m => ({ ...m, restantes: m.horas }))
+    );
 
-    DIAS.forEach(dia => {
-      BLOQUES.forEach(bloque => {
+    const horasDia = horasPorDia(totalHorasGrupo(grupo));
 
-        // materias aún disponibles y con docente libre ese día
+    DIAS.forEach((dia, indexDia) => {
+      let horasHoy = horasDia[indexDia];
+      let bloques = mezclar([...BLOQUES]);
+
+      while (horasHoy > 0 && bloques.length > 0) {
+        const bloque = bloques.pop();
+
         const candidatas = materiasGrupo.filter(m => {
           if (m.restantes <= 0) return false;
 
           const docente = docentes.find(d => d.materia === m.nombre);
-          if (!docente) return false;
-
-          if (!docente.disponibilidad.includes(dia)) return false;
-
-          return !hayConflicto(
-            dia,
-            bloque.inicio,
-            docente.nombre,
-            grupo,
-            m.nombre
-          );
+          return docente &&
+            docente.disponibilidad.includes(dia) &&
+            !hayConflicto(dia, bloque.inicio, docente.nombre, grupo);
         });
 
-        if (candidatas.length === 0) return;
+        if (candidatas.length === 0) break;
 
-        // Elegimos una materia aleatoria válida
         const materia = candidatas[Math.floor(Math.random() * candidatas.length)];
         const docente = docentes.find(d => d.materia === materia.nombre);
 
@@ -138,19 +158,18 @@ function generarHorario() {
         });
 
         materia.restantes--;
-      });
+        horasHoy--;
+      }
     });
 
-    // Validación final
     materiasGrupo.forEach(m => {
       if (m.restantes > 0) {
-        errores.push(
-          `No se pudieron asignar todas las horas de ${m.nombre} (${grupo})`
-        );
+        errores.push(`No se asignaron todas las horas de ${m.nombre} (${grupo})`);
       }
     });
   });
 }
+
 
 function renderizarErrores() {
   const ul = document.getElementById("errores");
