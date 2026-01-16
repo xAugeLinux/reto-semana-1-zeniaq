@@ -223,6 +223,45 @@ function renderizarGrid(grupoSeleccionado) {
   });
 }
 
+function renderizarInfo(grupoSeleccionado) {
+  // Grupo
+  document.getElementById("grupo").textContent = grupoSeleccionado;
+
+  // Materias del grupo
+  const ulMaterias = document.getElementById("materias");
+  ulMaterias.innerHTML = "";
+
+  materias
+    .filter(m => m.grupo === grupoSeleccionado)
+    .forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = `${m.nombre} (${m.horas} h/semana)`;
+      ulMaterias.appendChild(li);
+    });
+
+  // Docentes involucrados
+  const ulDocentes = document.getElementById("docentes");
+  ulDocentes.innerHTML = "";
+
+  const materiasGrupo = materias
+    .filter(m => m.grupo === grupoSeleccionado)
+    .map(m => m.nombre);
+
+  docentes
+    .filter(d => materiasGrupo.includes(d.materia))
+    .forEach(d => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${d.nombre}</strong><br>
+        <span class="materia-docente">${d.materia}</span><br>
+        <span class="disponibilidad">
+          Disponible: ${d.disponibilidad.join(", ")}
+        </span>
+      `;
+      ulDocentes.appendChild(li);
+    });
+}
+
 document.getElementById("selector-grupo").addEventListener("change", e => {
   renderizarGrid(e.target.value);
 });

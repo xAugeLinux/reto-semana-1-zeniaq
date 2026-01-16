@@ -44,14 +44,14 @@ body {
 button {
   padding: 8px 16px;
   border: none;
-  background-color: #d21919;
+  background-color: #1976d2;
   color: white;
   border-radius: 4px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #a01212;
+  background-color: #125aa0;
 }
 
 select {
@@ -84,6 +84,32 @@ select {
   padding-left: 18px;
   margin: 0;
 }
+
+.lista-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.lista-grid li {
+  background: #f4f6f8;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  text-align: center;
+
+  transition: background 0.2s ease;
+}
+
+.lista-grid li:hover {
+  background: #e9eef3;
+}
+
 
 /* ---------- HORARIO ---------- */
 
@@ -120,12 +146,12 @@ td:first-child {
 /* ---------- CLASES Y HUECOS ---------- */
 
 .clase-asignada {
-  background-color: #fde3e6;
+  background-color: #e3f2fd;
 }
 
 .hueco {
   background-color: #fafafa;
-  color: #999999;
+  color: #999;
   font-style: italic;
 }
 
