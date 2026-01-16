@@ -7,42 +7,62 @@
 </head>
 <body>
 
-<h1>Asignación de Horarios</h1>
-<button id="generar">Generar horario</button>
-<select id="selector-grupo"></select>
+<div class="app">
 
-<div class="contenedor-datos">
-  <div class="contenedor-grupo">
-    <h2>Grupo</h2>
-    <p id="grupo"></p>
-  </div>
-  <div class="contenedor-docentes">
-    <h2>Docentes</h2>
-    <ul id="docentes"></ul>
-  </div>
-  <div class="contenedor-materias">
-    <h2>Materias</h2>
-    <ul id="materias"></ul>
-  </div>
+  <header class="header">
+    <h1>Asignación de Horarios Académicos</h1>
+  </header>
+
+  <section class="panel-controles">
+    <button id="generar">Generar horario</button>
+
+    <label for="selector-grupo">Grupo:</label>
+    <select id="selector-grupo"></select>
+  </section>
+
+  <section class="contenedor-datos">
+    <div class="card">
+      <h3>Grupo seleccionado</h3>
+      <p id="grupo">—</p>
+    </div>
+
+    <div class="card">
+      <h3>Docentes</h3>
+      <ul id="docentes"></ul>
+    </div>
+
+    <div class="card">
+      <h3>Materias</h3>
+      <ul id="materias"></ul>
+    </div>
+  </section>
+
+  <section class="horario">
+    <h2 id="titulo-grupo"></h2>
+
+    <div class="tabla-wrapper">
+      <table id="grid-horario">
+        <thead>
+          <tr>
+            <th>Horario</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mensajes">
+    <h2>Alertas</h2>
+    <ul id="errores"></ul>
+  </section>
+
 </div>
-
-<h2 id="titulo-grupo"></h2>
-
-<table id="grid-horario">
-  <thead>
-    <tr>
-      <th>Horario</th>
-      <th>Lunes</th>
-      <th>Martes</th>
-      <th>Miércoles</th>
-      <th>Jueves</th>
-      <th>Viernes</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<ul id="errores"></ul>
 
 <script src="app.js"></script>
 </body>
